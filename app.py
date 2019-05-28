@@ -20,7 +20,7 @@
 
         * verification process *
             [ ] setup auto-mailer -> google smtp server
-            [~] different user accounts (administrator -> counselor -> student)
+            [x] different user accounts (administrator -> counselor -> student)
 
 
 '''
@@ -49,8 +49,11 @@ def before_request():
         g.user = session['user']
         g.total_hours = return_user_hours(session['user'])
         g.level = list(user_levels.keys())[list(user_levels.values()).index(return_user_level(session['user']))]
-        g.data = ['test 1', 'test 2', 'test 3']  # this will be our array of counselors, make a function that grabs them
-        # and returns them all with a list
+
+        g.counselor_list = []  # our list of counselors
+        for name in return_counselor_names():
+            g.counselor_list.append(name)
+        g.counselor_list = [x[0] for x in g.counselor_list]
 
 
 @app.route('/')
@@ -58,10 +61,13 @@ def root():
     return redirect(url_for('login'))
 
 
-@app.route('/submit')
+@app.route('/submit', methods=['GET', 'POST'])
 def submit():
-    print(g.level)
     if g.user and g.level == "student":
+        if request.method == "POST":
+            if "submit_button" in request.form:
+                pass
+
         return render_template("submit.html")
     else:
         return redirect(url_for('home'))

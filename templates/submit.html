@@ -6,22 +6,25 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-    <title>Login</title>
+    <title>Submit</title>
   </head>
 
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand">Fractal - Alpha</a>
+    <a class="navbar-brand">Fractal</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" href="/login">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/register">Register</a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/submit">Submit A Request</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
       </ul>
     </div>
   </nav>
@@ -42,25 +45,27 @@
         <form method="post">
           <div class="form-row">
             <div class="form-group col-md-6">
-              <input type="text" class="form-control" name="username" placeholder="Username">
+              <input type="text" class="form-control" name="number_of_hours" placeholder="Number of Hours">
             </div>
             <div class="form-group col-md-6">
-              <input type="password" class="form-control" name="password" placeholder="Password">
+              <input type="text" class="form-control" name="location" placeholder="Location">
             </div>
-
-            <div class="dropdown">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Dropdown button
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  {% for data in g.data %}
-                <a class="dropdown-item" href="#">{{ data }}</a>
-                  {% endfor %}
-              </div>
-            </div>
-
           </div>
-            <button type="submit" class="btn btn-primary block" name="submit_button">Submit</button>
+
+            <div class="form-group">
+              <input type="text" class="form-control" name="number_of_location" placeholder="Telephone Number of Location">
+            </div>
+
+            <div class="form-group">
+              <label for="counselor_dropdown">Select your guidence counselor:</label>
+              <select class="form-control" id="counselor_dropdown">
+                  {% for name in g.counselor_list %}
+                  <option>{{ name }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary block" name="submit_button">Submit Your Request</button>
         </form>
       </div>
     </div>

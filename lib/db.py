@@ -6,6 +6,7 @@
 '''
 
 import sqlite3
+import datetime
 
 db_name = "database.db"
 
@@ -76,5 +77,43 @@ def return_user_level(username):
     conn.commit()
 
     return c.fetchone()[0]
+
+    conn.close()
+
+
+def return_user_id(username):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.execute("SELECT id from fractal_users WHERE username='{username}'".format(username=username))
+    conn.commit()
+
+    return c.fetchone()[0]
+
+    conn.close()
+
+
+def return_counselor_names():
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.execute("SELECT username from fractal_users WHERE user_level=1")
+    conn.commit()
+
+    return c.fetchall()
+
+    conn.close()
+
+
+def insert_new_activity(username, number_of_hours, location, telephone_number, date_completed):
+    date_submitted = datetime.datetime.now().strftime("%Y-%m-%d")
+
+    to_insert = [(return_user_id(username), number_of_hours, location, telephone_number, date_completed, date_submitted)]
+
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.executemany("INSERT INTO fractal_users ('id', 'num_of_hours', 'location', 'date_submitted', 'date_of_completion', 'phone_number') VALUES (?, ?, ?, ?, ?, ?)", to_insert)
+    conn.commit()
 
     conn.close()
