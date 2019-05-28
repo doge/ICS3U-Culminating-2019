@@ -66,3 +66,15 @@ def return_user_hours(username):
     return c.fetchone()[0]
 
     conn.close()
+
+
+def return_user_level(username):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.execute("SELECT user_level from fractal_users WHERE username='{username}'".format(username=username))
+    conn.commit()
+
+    return c.fetchone()[0]
+
+    conn.close()

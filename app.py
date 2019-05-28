@@ -20,17 +20,24 @@
 
         * verification process *
             [ ] setup auto-mailer -> google smtp server
-            [ ] different user accounts (administrator -> counselor -> student)
+            [~] different user accounts (administrator -> counselor -> student)
 
 
 '''
 
 from flask import *
 from lib.db import *
-import os, hashlib
+import os
+import hashlib
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
+user_levels = {
+    'student': 0,
+    'counselor': 1,
+    'admin': 2
+}
 
 
 # This is called before a request is made to the server.
@@ -40,12 +47,24 @@ def before_request():
     if 'user' in session:
         # 'g' is a namespace object that has the same lifetime as an application context.
         g.user = session['user']
-        g.hours = return_user_hours(session['user'])
+        g.total_hours = return_user_hours(session['user'])
+        g.level = list(user_levels.keys())[list(user_levels.values()).index(return_user_level(session['user']))]
+        g.data = ['test 1', 'test 2', 'test 3']  # this will be our array of counselors, make a function that grabs them
+        # and returns them all with a list
 
 
 @app.route('/')
 def root():
     return redirect(url_for('login'))
+
+
+@app.route('/submit')
+def submit():
+    print(g.level)
+    if g.user and g.level == "student":
+        return render_template("submit.html")
+    else:
+        return redirect(url_for('home'))
 
 
 # The root of our website.
@@ -67,8 +86,8 @@ def login():
     # If the user is already logged in,
     if g.user:
         return redirect(url_for('solve'))
-
-    return render_template('login.html')
+    else:
+        return render_template('login.html')
 
 
 # The registration page of our website.
