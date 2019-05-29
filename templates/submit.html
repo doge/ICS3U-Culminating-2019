@@ -45,25 +45,34 @@
         <form method="post">
           <div class="form-row">
             <div class="form-group col-md-6">
-              <input type="text" class="form-control" name="number_of_hours" placeholder="Number of Hours">
+              <input type="number" step="0.1" class="form-control" name="number_of_hours" placeholder="Number of Hours" required>
             </div>
             <div class="form-group col-md-6">
-              <input type="text" class="form-control" name="location" placeholder="Location">
+              <input type="text" class="form-control" name="location" placeholder="Location" required>
             </div>
           </div>
 
             <div class="form-group">
-              <input type="text" class="form-control" name="number_of_location" placeholder="Telephone Number of Location">
+              <input type="tel" class="form-control" name="number_of_location" placeholder="Telephone Number of Location" required>
             </div>
 
-            <div class="form-group">
-              <label for="counselor_dropdown">Select your guidence counselor:</label>
-              <select class="form-control" id="counselor_dropdown">
-                  {% for name in g.counselor_list %}
-                  <option>{{ name }}</option>
-                  {% endfor %}
-              </select>
+            <div class="form-row">
+               <div class="form-group col-md-6">
+                  <label for="counselor_dropdown">Select your guidance counselor:</label>
+                      <select class="form-control" name="counselor">
+                          {% for name in g.counselor_list %}
+                          <option>{{ name }}</option>
+                          {% endfor %}
+                      </select>
+               </div>
+
+                <div class="form-group col-md-6">
+                  <label for="example-date-input">Date of completion:</label>
+                  <input class="form-control" type="date" name="date_of_completion" required>
+                </div>
             </div>
+
+
 
             <button type="submit" class="btn btn-primary block" name="submit_button">Submit Your Request</button>
         </form>

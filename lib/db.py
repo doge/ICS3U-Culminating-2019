@@ -105,15 +105,18 @@ def return_counselor_names():
     conn.close()
 
 
-def insert_new_activity(username, number_of_hours, location, telephone_number, date_completed):
+def insert_new_activity(username, number_of_hours, location, telephone_number, date_completed, counselor):
     date_submitted = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    to_insert = [(return_user_id(username), number_of_hours, location, telephone_number, date_completed, date_submitted)]
+    to_insert = [(return_user_id(username), username, number_of_hours, location, date_submitted, date_completed,
+                  telephone_number, counselor)]
 
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
 
-    c.executemany("INSERT INTO fractal_users ('id', 'num_of_hours', 'location', 'date_submitted', 'date_of_completion', 'phone_number') VALUES (?, ?, ?, ?, ?, ?)", to_insert)
+    c.executemany("INSERT INTO fractal_activities ('id', 'name', 'num_of_hours', 'location', 'date_submitted', "
+                  "'date_of_completion', 'phone_number', 'counselor') VALUES (?, ?, ?, ?, ?, ?, ?, ?)", to_insert)
     conn.commit()
 
     conn.close()
+

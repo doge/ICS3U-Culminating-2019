@@ -18,9 +18,22 @@
             [x] login/registration system -> sqlite3 db
             [x] sessions
 
+            * students *
+                [x] submit a request form
+                [ ] display all requests on home
+
+            * counselors *
+                [ ] approval of requests
+
         * verification process *
             [ ] setup auto-mailer -> google smtp server
             [x] different user accounts (administrator -> counselor -> student)
+
+        * finishing touches *
+            [ ] table on /home that displays all requests
+
+        * organization *
+            [ ] put routes into separate files -> create a directory (/routes) [use 'blueprints']
 
 
 '''
@@ -66,7 +79,8 @@ def submit():
     if g.user and g.level == "student":
         if request.method == "POST":
             if "submit_button" in request.form:
-                pass
+                insert_new_activity(g.user, request.form['number_of_hours'], request.form['location'], request.form['number_of_location'], request.form['date_of_completion'], request.form['counselor'])
+                flash('Your submission was successful!', 'success')
 
         return render_template("submit.html")
     else:
@@ -91,7 +105,7 @@ def login():
 
     # If the user is already logged in,
     if g.user:
-        return redirect(url_for('solve'))
+        return redirect(url_for('home'))
     else:
         return render_template('login.html')
 
