@@ -126,9 +126,9 @@ def register():
                     insert_new_user(request.form['username'], request.form['email'], hashed_password)
                     flash('Your registration was successful!', 'success')
             else:
-                flash('One of the fields was not filled in.')
+                flash('One of the fields was not filled in.', 'danger')
         elif 'login_button' in request.form:
-                return redirect(url_for('login'))
+            return redirect(url_for('login'))
 
     return render_template('register.html')
 
@@ -144,7 +144,8 @@ def logout():
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     if g.user:
-        return render_template('home.html')
+        submissions = return_user_submissions(return_user_id(g.user))
+        return render_template('home.html', submissions=submissions)
     else:
         return redirect(url_for('login'))
 

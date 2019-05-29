@@ -36,6 +36,43 @@
               <h2>Welcome back, {{ g.user.capitalize() }}.</h2>
               <h4>You currently have {{ g.total_hours }} community service hours.</h4>
               <h5>Your level is: {{ g.level.capitalize() }}.</h5>
+
+              <br>
+
+                {% if g.level == "student" %}
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Status</th>
+                      <th scope="col">Counselor</th>
+                      <th scope="col">Date of Submission</th>
+                      <th scope="col">Location</th>
+                      <th scope="col">Phone Number</th>
+                      <th scope="col">Number of Hours</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in submissions %}
+                    <tr>
+                        {% if item[2] == 0 %}
+                        <td>Pending</td>
+                        {% elif item[2] == 1 %}
+                        <td>Approved</td>
+                        {% elif item[2] == 2 %}
+                        <td>Denied</td>
+                        {% endif %}
+
+                          <td>{{ item[3] }}</td>
+                          <td>{{ item[8] }}</td>
+                          <td>{{ item[9] }}</td>
+                          <td>{{ item[10] }}</td>
+                          <td>{{ item[6] }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                {% endif %}
+
           </div>
         </div>
 

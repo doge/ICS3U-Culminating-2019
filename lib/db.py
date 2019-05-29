@@ -105,6 +105,18 @@ def return_counselor_names():
     conn.close()
 
 
+def return_user_submissions(id_num):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.execute("SELECT * from fractal_activities WHERE user_id='{id}'".format(id=id_num))
+    conn.commit()
+
+    return c.fetchall()
+
+    conn.close()
+
+
 def insert_new_activity(username, number_of_hours, location, telephone_number, date_completed, counselor):
     date_submitted = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -114,7 +126,7 @@ def insert_new_activity(username, number_of_hours, location, telephone_number, d
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
 
-    c.executemany("INSERT INTO fractal_activities ('id', 'name', 'num_of_hours', 'location', 'date_submitted', "
+    c.executemany("INSERT INTO fractal_activities ('user_id', 'name', 'num_of_hours', 'location', 'date_submitted', "
                   "'date_of_completion', 'phone_number', 'counselor') VALUES (?, ?, ?, ?, ?, ?, ?, ?)", to_insert)
     conn.commit()
 
