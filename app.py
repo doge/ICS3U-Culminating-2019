@@ -20,17 +20,17 @@
 
             * students *
                 [x] submit a request form
-                [ ] display all requests on home
+                [x] display all requests on home
 
             * counselors *
-                [ ] approval of requests
+                [x] approval of requests
 
         * verification process *
             [ ] setup auto-mailer -> google smtp server
             [x] different user accounts (administrator -> counselor -> student)
 
         * finishing touches *
-            [ ] table on /home that displays all requests
+            [x] table on /home that displays all requests
 
         * organization *
             [ ] put routes into separate files -> create a directory (/routes) [use 'blueprints']
@@ -144,8 +144,19 @@ def logout():
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     if g.user:
-        submissions = return_user_submissions(return_user_id(g.user))
-        return render_template('home.html', submissions=submissions)
+        if request.method == "POST":
+            if "approve_button" in request.form:
+                set_status_of_activity(request.form['approve_button'], 1)
+            elif "deny_button" in request.form:
+                set_status_of_activity(request.form['deny_button'], 2)
+
+        if g.level == "student":
+            submissions = return_user_submissions(return_user_id(g.user))
+            return render_template('home.html', submissions=submissions)
+        elif g.level == "counselor":
+            submissions = return_all_user_submissions()
+            print(submissions)
+            return render_template('home.html', submissions=submissions)
     else:
         return redirect(url_for('login'))
 

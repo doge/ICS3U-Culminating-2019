@@ -45,6 +45,17 @@ def username_exists(username):
     conn.close()
 
 
+def return_username_from_user_id(username):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.execute("SELECT username FROM fractal_users WHERE id=") # this
+    conn.commit()
+
+
+    conn.close()
+
+
 def insert_new_user(username, email, password):
     to_insert = [(username, email, password)]
 
@@ -110,6 +121,30 @@ def return_user_submissions(id_num):
     c = conn.cursor()
 
     c.execute("SELECT * from fractal_activities WHERE user_id='{id}'".format(id=id_num))
+    conn.commit()
+
+    return c.fetchall()
+
+    conn.close()
+
+
+def return_all_user_submissions():
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.execute("SELECT * from fractal_activities")
+    conn.commit()
+
+    return c.fetchall()
+
+    conn.close()
+
+
+def set_status_of_activity(activity_id, status):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.execute("UPDATE fractal_activities SET approved={status} WHERE submission_id={activity_id}".format(activity_id=activity_id, status=status))
     conn.commit()
 
     return c.fetchall()
