@@ -45,11 +45,11 @@ def username_exists(username):
     conn.close()
 
 
-def return_username_from_user_id(username):
+def return_username_from_user_id(user_id):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
 
-    c.execute("SELECT username FROM fractal_users WHERE id=") # this
+    c.execute("SELECT username FROM fractal_users WHERE id='{user_id}'".format(user_id=user_id)) # this
     conn.commit()
 
 
