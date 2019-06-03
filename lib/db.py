@@ -11,6 +11,49 @@ import datetime
 db_name = "database.db"
 
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+
+def return_user_data(username):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.row_factory = dict_factory
+
+    c.execute("SELECT * FROM fractal_users WHERE username='?'", username)
+    conn.commit()
+
+    return c.fetchone()
+
+    conn.close()
+
+
+def insert_password_token(token, username):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.row_factory = dict_factory
+
+    c.execute("UPDATE fractal_users SET password_token=? WHERE username=?", (token, username))
+    conn.commit()
+
+    conn.close()
+
+
+def return_username_from_email(email):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+
+    c.execute("SELECT username FROM fractal_users WHERE email=?", (email, ))
+    conn.commit()
+
+    return c.fetchone()[0]
+
+    conn.close()
+
+
 def return_valid_user(username, password):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
@@ -51,7 +94,6 @@ def return_username_from_user_id(user_id):
 
     c.execute("SELECT username FROM fractal_users WHERE id='{user_id}'".format(user_id=user_id)) # this
     conn.commit()
-
 
     conn.close()
 

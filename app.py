@@ -40,6 +40,8 @@
 
 from flask import *
 from lib.db import *
+from lib.misc import generate_token
+from lib.mailer import send_mail
 import os
 import hashlib
 
@@ -159,6 +161,26 @@ def home():
             return render_template('home.html', submissions=submissions)
     else:
         return redirect(url_for('login'))
+
+
+@app.route('/reset_auth', methods=['GET', 'POST'])
+def reset_auth():
+    if request.method == "POST":
+        token = generate_token(32)
+        username = return_username_from_email(request.form['email'])
+        # insert our token into the database
+        insert_password_token(token, username)
+        # send the user the link to reset their password
+        send_mail(request.form['email'], 'The link to reset your password is example.com/%s/%s' % (username, token))
+        flash('A link to reset your password has been sent to your email address.', 'success')
+
+    return render_template('reset_auth.html')
+
+
+@app.route('/reset', defaults={'username': None, 'token': None}, methods=['GET', 'POST'])
+@app.route('/reset/<username>/<token>', methods=['GET', 'POST'])
+def reset(username, token):
+    return render_template('reset.html', username=username, token=token)
 
 
 if __name__ == '__main__':

@@ -7,8 +7,8 @@
 
 import smtplib
 
-username = "fractalmailer@gmail.com"
-password = "redacted"
+username = "gabe@ourlol.ca"
+password = "pythonlol"
 ssl_port = 465
 
 
@@ -26,5 +26,3 @@ def send_mail(to_email, message_to_send):
     )
     server.quit()
 
-
-#send_mail("my_email@example.com", "hello world!")
