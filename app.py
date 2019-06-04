@@ -33,7 +33,7 @@
             [x] table on /home that displays all requests
 
         * organization *
-            [ ] put routes into separate files -> create a directory (/routes) [use 'blueprints']
+            [ ] put blueprints into separate files -> create a directory (/blueprints) [use 'blueprints']
 
 
 '''
@@ -62,8 +62,8 @@ def before_request():
     if 'user' in session:
         # 'g' is a namespace object that has the same lifetime as an application context.
         g.user = session['user']
-        g.total_hours = return_user_hours(session['user'])
-        g.level = list(user_levels.keys())[list(user_levels.values()).index(return_user_level(session['user']))]
+        g.total_hours = return_user_data(session['user'])['total_hours']
+        g.level = list(user_levels.keys())[list(user_levels.values()).index(return_user_data(session['user'])['user_level'])]
 
         g.counselor_list = []  # our list of counselors
         for name in return_counselor_names():
@@ -149,11 +149,12 @@ def home():
         if request.method == "POST":
             if "approve_button" in request.form:
                 set_status_of_activity(request.form['approve_button'], 1)
+                set_num_of_hours(request.form['username'])
             elif "deny_button" in request.form:
                 set_status_of_activity(request.form['deny_button'], 2)
 
         if g.level == "student":
-            submissions = return_user_submissions(return_user_id(g.user))
+            submissions = return_user_submissions(return_user_data(g.user)['id'])
             return render_template('home.html', submissions=submissions)
         elif g.level == "counselor":
             submissions = return_all_user_submissions()
@@ -180,6 +181,17 @@ def reset_auth():
 @app.route('/reset', defaults={'username': None, 'token': None}, methods=['GET', 'POST'])
 @app.route('/reset/<username>/<token>', methods=['GET', 'POST'])
 def reset(username, token):
+    if request.method == "POST":
+        if not username_exists(request.form['username']):
+            flash('No user with that username exists.', 'danger')
+        else:
+            if request.form['token'] == return_user_data(request.form['username'])['password_token']:
+                hashed_password = hashlib.sha256(request.form['password'].encode()).hexdigest()
+                update_new_password(request.form['username'], hashed_password)
+                flash(Markup('Your password has been updated! <a href="/login">Click here to login.</a>'), 'success')
+            else:
+                flash('Your password reset token was incorrect.', 'danger')
+
     return render_template('reset.html', username=username, token=token)
 
 
