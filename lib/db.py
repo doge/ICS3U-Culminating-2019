@@ -31,6 +31,19 @@ def return_user_data(username):
     conn.close()
 
 
+def return_activity_data(activity_id):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.row_factory = dict_factory
+
+    c.execute("SELECT * FROM fractal_activities WHERE submission_id=?", (activity_id, ))
+    conn.commit()
+
+    return c.fetchone()
+
+    conn.close()
+
+
 def insert_password_token(token, username):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
@@ -170,6 +183,17 @@ def update_new_password(username, password):
     c.row_factory = dict_factory
 
     c.execute("UPDATE fractal_users SET password_token=?, password=? WHERE username=?", (None, password, username))
+    conn.commit()
+
+    conn.close()
+
+
+def update_number_of_hours(user_id, num_of_hours):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.row_factory = dict_factory
+
+    c.execute("UPDATE fractal_users SET total_hours = total_hours + ? WHERE id=?", (num_of_hours, user_id ))
     conn.commit()
 
     conn.close()

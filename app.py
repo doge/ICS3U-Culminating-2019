@@ -149,7 +149,7 @@ def home():
         if request.method == "POST":
             if "approve_button" in request.form:
                 set_status_of_activity(request.form['approve_button'], 1)
-                set_num_of_hours(request.form['username'])
+                update_number_of_hours(return_activity_data(request.form['approve_button'])['user_id'], return_activity_data(request.form['approve_button'])['num_of_hours'])
             elif "deny_button" in request.form:
                 set_status_of_activity(request.form['deny_button'], 2)
 
@@ -158,7 +158,6 @@ def home():
             return render_template('home.html', submissions=submissions)
         elif g.level == "counselor":
             submissions = return_all_user_submissions()
-            print(submissions)
             return render_template('home.html', submissions=submissions)
     else:
         return redirect(url_for('login'))
@@ -167,13 +166,16 @@ def home():
 @app.route('/reset_auth', methods=['GET', 'POST'])
 def reset_auth():
     if request.method == "POST":
-        token = generate_token(32)
-        username = return_username_from_email(request.form['email'])
-        # insert our token into the database
-        insert_password_token(token, username)
-        # send the user the link to reset their password
-        send_mail(request.form['email'], 'The link to reset your password is example.com/%s/%s' % (username, token))
-        flash('A link to reset your password has been sent to your email address.', 'success')
+        try:
+            token = generate_token(32)
+            username = return_username_from_email(request.form['email'])
+            # insert our token into the database
+            insert_password_token(token, username)
+            # send the user the link to reset their password
+            send_mail(request.form['email'], 'The link to reset your password is example.com/%s/%s' % (username, token))
+            flash('A link to reset your password has been sent to your email address.', 'success')
+        except:
+            flash('No user with that email exists.', 'danger')
 
     return render_template('reset_auth.html')
 

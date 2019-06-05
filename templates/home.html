@@ -93,6 +93,7 @@
                           <th scope="col">Location</th>
                           <th scope="col">Phone Number</th>
                           <th scope="col">Number of Hours</th>
+                          <th scope="col">Comment</th>
                           <th scope="col">Actions</th>
                         </tr>
                       </thead>
@@ -114,14 +115,29 @@
                               <td>{{ item[10] }}</td>
                               <td>{{ item[6] }}</td>
                               <td>
-                                  <button class="btn btn-success block btn-sm" type="submit" value="{{ item[0] }}" name="approve_button">Approve</button>
+                                  <p>
+                                      <button class="btn btn-primary sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                        Show
+                                      </button>
+                                  </p>
+                              </td>
+                              <td>
+                                  <button class="btn btn-success block btn-sm" type="submit" value="{{ item[0] }}" name="approve_button" {% if item[2] == 1 %} disabled {% endif %}>Approve</button>
                                   <br>
-                                  <button class="btn btn-danger block btn-sm" type="submit" value="{{ item[0] }}" name="deny_button">Deny</button>
+                                  <button class="btn btn-danger block btn-sm" type="submit" value="{{ item[0] }}" name="deny_button" {% if item[2] == 2 %} disabled {% endif %}>Deny</button>
                               </td>
                         </tr>
                         {% endfor %}
                       </tbody>
                     </table>
+                    <hr>
+
+                    <div class="collapse" id="collapseExample">
+                      <div class="card card-body">
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                      </div>
+                    </div>
+
                 </form>
                 {% endif %}
 
