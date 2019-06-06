@@ -146,8 +146,12 @@
 
                            <hr>
 
-                           <h5>Granter Comment</h5>
-                           {{ item['giver_comment'] }}
+                           <h5>Granter Comment | {{ item['giver_email'] }}</h5>
+                              {% if item['giver_comment'] == None %}
+                              The granter has not responded to the email yet though, it has been sent.
+                              {% else %}
+                              {{ item['giver_comment'] }}
+                              {% endif %}
                           </div>
                         </div>
                     </div>

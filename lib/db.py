@@ -57,6 +57,19 @@ def return_activity_data(activity_id):
     conn.close()
 
 
+def return_activity_data_from_token(token):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.row_factory = dict_factory
+
+    c.execute("SELECT * FROM fractal_activities WHERE post_token=?", (token, ))
+    conn.commit()
+
+    return c.fetchone()
+
+    conn.close()
+
+
 def insert_password_token(token, username):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
@@ -189,17 +202,17 @@ def set_status_of_activity(activity_id, status):
     conn.close()
 
 
-def insert_new_activity(user_id, full_name, number_of_hours, location, telephone_number, date_completed, counselor, student_comment, token):
+def insert_new_activity(user_id, full_name, number_of_hours, location, telephone_number, date_completed, counselor, student_comment, token, granter_email):
     date_submitted = datetime.datetime.now().strftime("%Y-%m-%d")
 
     to_insert = [(user_id, full_name, number_of_hours, location, date_submitted, date_completed,
-                  telephone_number, counselor, student_comment, token)]
+                  telephone_number, counselor, student_comment, token, granter_email)]
 
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
 
     c.executemany("INSERT INTO fractal_activities ('user_id', 'name', 'num_of_hours', 'location', 'date_submitted', "
-                  "'date_of_completion', 'phone_number', 'counselor', 'student_comment', 'post_token') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", to_insert)
+                  "'date_of_completion', 'phone_number', 'counselor', 'student_comment', 'post_token', 'giver_email') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", to_insert)
     conn.commit()
 
     conn.close()
@@ -210,18 +223,18 @@ def update_granter_comment(comment, token):
     c = conn.cursor()
     c.row_factory = dict_factory
 
-    c.execute("UPDATE fractal_activities SET giver_comment=? WHERE post_token=?", (comment, token))
+    c.execute("UPDATE fractal_activities SET giver_comment=?, post_token=? WHERE post_token=?", (comment, None, token))
     conn.commit()
 
     conn.close()
 
 
-def null_post_token(id):
+def null_post_token(post_token):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
     c.row_factory = dict_factory
 
-    c.execute("UPDATE fractal_activities SET giver_comment=? WHERE id=?", (None, id))
+    c.execute("UPDATE fractal_activities SET post_token=? WHERE post_token=?", (None, post_token))
     conn.commit()
 
     conn.close()
