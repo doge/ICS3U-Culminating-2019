@@ -82,12 +82,12 @@ def submit():
             if "submit_button" in request.form:
                 user_data = return_user_data(g.user)
                 name_list = request.form['counselor'].split(" ")
+                token = generate_token(32)
                 insert_new_activity(user_data['id'], "%s %s" % (user_data['first_name'], user_data['last_name']),
                                     request.form['number_of_hours'], request.form['location'],
                                     request.form['number_of_location'], request.form['date_of_completion'],
-                                    #return_user_data(return_username_from_name(name_list[0], name_list[1]))['id'],
                                     "%s %s" % (name_list[0], name_list[1]),
-                                    request.form['comment'])
+                                    request.form['comment'], token)
                 flash('Your submission was successful!', 'success')
 
         return render_template("submit.html")
@@ -172,8 +172,8 @@ def home():
         return redirect(url_for('login'))
 
 
-@app.route('/reset_auth', methods=['GET', 'POST'])
-def reset_auth():
+@app.route('/reset',methods=['GET', 'POST'])
+def pre_reset():
     if request.method == "POST":
         try:
             token = generate_token(32)
@@ -189,7 +189,6 @@ def reset_auth():
     return render_template('reset_auth.html')
 
 
-@app.route('/reset', defaults={'username': None, 'token': None}, methods=['GET', 'POST'])
 @app.route('/reset/<username>/<token>', methods=['GET', 'POST'])
 def reset(username, token):
     if request.method == "POST":
@@ -204,6 +203,19 @@ def reset(username, token):
                 flash('Your password reset token was incorrect.', 'danger')
 
     return render_template('reset.html', username=username, token=token)
+
+
+@app.route('/grant', defaults={'token': None}, methods=['GET', 'POST'])
+@app.route('/grant/<token>', methods=['GET', 'POST'])
+def grant(token):
+    if request.method == "POST":
+        try:
+            update_granter_comment(request.form['comment'], request.form['token'])
+            flash('Your comment has been added successfully.', 'success')
+        except:
+            flash('Your token is invalid.', 'danger')
+
+    return render_template('grant.html', token=token)
 
 
 if __name__ == '__main__':
