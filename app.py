@@ -67,8 +67,7 @@ def before_request():
 
         g.counselor_list = []  # our list of counselors
         for name in return_counselor_names():
-            g.counselor_list.append(name)
-        g.counselor_list = [x[0] for x in g.counselor_list]
+            g.counselor_list.append("%s %s" % (name[0], name[1]))
 
 
 @app.route('/')
@@ -81,7 +80,14 @@ def submit():
     if g.user and g.level == "student":
         if request.method == "POST":
             if "submit_button" in request.form:
-                insert_new_activity(g.user, request.form['number_of_hours'], request.form['location'], request.form['number_of_location'], request.form['date_of_completion'], request.form['counselor'])
+                user_data = return_user_data(g.user)
+                name_list = request.form['counselor'].split(" ")
+                insert_new_activity(user_data['id'], "%s %s" % (user_data['first_name'], user_data['last_name']),
+                                    request.form['number_of_hours'], request.form['location'],
+                                    request.form['number_of_location'], request.form['date_of_completion'],
+                                    #return_user_data(return_username_from_name(name_list[0], name_list[1]))['id'],
+                                    "%s %s" % (name_list[0], name_list[1]),
+                                    request.form['comment'])
                 flash('Your submission was successful!', 'success')
 
         return render_template("submit.html")
@@ -125,7 +131,7 @@ def register():
                     flash('A person with the username \"%s\" already exists.' % request.form['username'], 'danger')
                 else:
                     hashed_password = hashlib.sha256(request.form['password'].encode()).hexdigest()
-                    insert_new_user(request.form['username'], request.form['email'], hashed_password)
+                    insert_new_user(request.form['username'], request.form['first_name'], request.form['last_name'], request.form['email'], hashed_password)
                     flash('Your registration was successful!', 'success')
             else:
                 flash('One of the fields was not filled in.', 'danger')
@@ -149,16 +155,19 @@ def home():
         if request.method == "POST":
             if "approve_button" in request.form:
                 set_status_of_activity(request.form['approve_button'], 1)
-                update_number_of_hours(return_activity_data(request.form['approve_button'])['user_id'], return_activity_data(request.form['approve_button'])['num_of_hours'])
+                update_number_of_hours(return_activity_data(request.form['approve_button'])['user_id'],
+                                       return_activity_data(request.form['approve_button'])['num_of_hours'])
             elif "deny_button" in request.form:
                 set_status_of_activity(request.form['deny_button'], 2)
 
+        first_name = return_user_data(g.user)['first_name']
         if g.level == "student":
             submissions = return_user_submissions(return_user_data(g.user)['id'])
-            return render_template('home.html', submissions=submissions)
+            return render_template('home.html', submissions=submissions, first_name=first_name)
         elif g.level == "counselor":
-            submissions = return_all_user_submissions()
-            return render_template('home.html', submissions=submissions)
+            counselor_name = "%s %s" % (return_user_data(g.user)['first_name'], return_user_data(g.user)['last_name'])
+            submissions = return_all_user_submissions(counselor_name)
+            return render_template('home.html', submissions=submissions, first_name=first_name)
     else:
         return redirect(url_for('login'))
 

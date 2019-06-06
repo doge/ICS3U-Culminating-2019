@@ -37,7 +37,7 @@
     <body>
         <div class="nav_spacing">
           <div class="container">
-              <h2>Welcome back, {{ g.user.capitalize() }}.</h2>
+              <h2>Welcome back, {{ first_name.capitalize() }}.</h2>
 
               {% if g.level == "student" %}
               <h4>You currently have {{ g.total_hours }} community service hours.</h4>
@@ -48,95 +48,110 @@
               <br>
 
                 {% if g.level == "student" %}
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col">Status</th>
-                      <th scope="col">Counselor</th>
-                      <th scope="col">Date of Submission</th>
-                      <th scope="col">Location</th>
-                      <th scope="col">Phone Number</th>
-                      <th scope="col">Number of Hours</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for item in submissions %}
-                    <tr>
-                        {% if item[2] == 0 %}
-                        <td>Pending</td>
-                        {% elif item[2] == 1 %}
-                        <td>Approved</td>
-                        {% elif item[2] == 2 %}
-                        <td>Denied</td>
-                        {% endif %}
-
-                          <td>{{ item[3] }}</td>
-                          <td>{{ item[8] }}</td>
-                          <td>{{ item[9] }}</td>
-                          <td>{{ item[10] }}</td>
-                          <td>{{ item[6] }}</td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-                {% endif %}
-
-                {% if g.level == "counselor" %}
-                <form method="post">
-                    <table class="table table-striped">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="data-table">
                       <thead>
                         <tr>
                           <th scope="col">Status</th>
                           <th scope="col">Counselor</th>
-                          <th scope="col">Student Name</th>
                           <th scope="col">Date of Submission</th>
                           <th scope="col">Location</th>
                           <th scope="col">Phone Number</th>
                           <th scope="col">Number of Hours</th>
-                          <th scope="col">Comment</th>
-                          <th scope="col">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {% for item in submissions %}
                         <tr>
-                            {% if item[2] == 0 %}
-                            <td>Pending</td>
-                            {% elif item[2] == 1 %}
-                            <td>Approved</td>
-                            {% elif item[2] == 2 %}
-                            <td>Denied</td>
+                            {% if item['approved'] == 0 %}
+                            <td><strong><font color="grey">Pending</font></strong></td>
+                            {% elif item['approved'] == 1 %}
+                            <td><strong><font color="green">Approved</font></strong></td>
+                            {% elif item['approved'] == 2 %}
+                            <td><strong><font color="red">Denied</font></strong></td>
                             {% endif %}
 
-                              <td>{{ item[3] }}</td>
-                              <td>{{ item[5] }}</td>
-                              <td>{{ item[8] }}</td>
-                              <td>{{ item[9] }}</td>
-                              <td>{{ item[10] }}</td>
-                              <td>{{ item[6] }}</td>
-                              <td>
-                                  <p>
-                                      <button class="btn btn-primary sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                                        Show
-                                      </button>
-                                  </p>
-                              </td>
-                              <td>
-                                  <button class="btn btn-success block btn-sm" type="submit" value="{{ item[0] }}" name="approve_button" {% if item[2] == 1 %} disabled {% endif %}>Approve</button>
-                                  <br>
-                                  <button class="btn btn-danger block btn-sm" type="submit" value="{{ item[0] }}" name="deny_button" {% if item[2] == 2 %} disabled {% endif %}>Deny</button>
-                              </td>
+                              <td>{{ item['counselor'] }}</td>
+                              <td>{{ item['date_submitted'] }}</td>
+                              <td>{{ item['location'] }}</td>
+                              <td>{{ item['phone_number'] }}</td>
+                              <td>{{ item['num_of_hours'] }}</td>
                         </tr>
                         {% endfor %}
                       </tbody>
                     </table>
+                </div>
+                {% endif %}
+
+                {% if g.level == "counselor" %}
+                <form method="post">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="data-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Status</th>
+                              <th scope="col">Counselor</th>
+                              <th scope="col">Student Name</th>
+                              <th scope="col">Date of Submission</th>
+                              <th scope="col">Location</th>
+                              <th scope="col">Phone Number</th>
+                              <th scope="col">Number of Hours</th>
+                              <th scope="col">Comment</th>
+                              <th scope="col">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for item in submissions %}
+                            <tr>
+                                {% if item['approved'] == 0 %}
+                                <td><strong><font color="grey">Pending</font></strong></td>
+                                {% elif item['approved'] == 1 %}
+                                <td><strong><font color="green">Approved</font></strong></td>
+                                {% elif item['approved'] == 2 %}
+                                <td><strong><font color="red">Denied</font></strong></td>
+                                {% endif %}
+
+                                  <td>{{ item['counselor'] }}</td>
+                                  <td>{{ item['name'] }}</td>
+                                  <td>{{ item['date_submitted'] }}</td>
+                                  <td>{{ item['location'] }}</td>
+                                  <td>{{ item['phone_number'] }}</td>
+                                  <td>{{ item['num_of_hours'] }}</td>
+                                  <td>
+                                      <p>
+                                          <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#comment_{{ item['submission_id'] }}" aria-expanded="false" aria-controls="{{ item['submission_id'] }}">
+                                            Reveal
+                                          </button>
+                                      </p>
+                                  </td>
+                                  <td>
+                                      <button class="btn btn-success block btn-sm" type="submit" value="{{ item[0] }}" name="approve_button" {% if item['approved'] == 1 %} disabled {% endif %}>Approve</button>
+                                      <br>
+                                      <button class="btn btn-danger block btn-sm" type="submit" value="{{ item[0] }}" name="deny_button" {% if item['approved'] == 2 %} disabled {% endif %}>Deny</button>
+                                  </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                    </div>
+
                     <hr>
 
-                    <div class="collapse" id="collapseExample">
-                      <div class="card card-body">
-                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-                      </div>
+                    {% for item in submissions %}
+                    <div class="form-group">
+                        <div class="collapse" id="comment_{{ item['submission_id'] }}">
+                          <div class="card card-body">
+                           <h5>Student Comment</h5>
+                           {{ item['student_comment'] }}
+
+                           <hr>
+
+                           <h5>Granter Comment</h5>
+                           {{ item['giver_comment'] }}
+                          </div>
+                        </div>
                     </div>
+                    {% endfor %}
 
                 </form>
                 {% endif %}

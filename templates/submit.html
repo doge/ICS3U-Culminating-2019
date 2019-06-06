@@ -9,6 +9,15 @@
     <title>Submit</title>
   </head>
 
+  <script>
+  function allow_numbers_only(e) {
+      let code = (e.which) ? e.which : e.keyCode;
+      if (code > 31 && (code < 48 || code > 57)) {
+          e.preventDefault();
+      }
+  }
+  </script>
+
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand">Fractal</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +62,7 @@
           </div>
 
             <div class="form-group">
-              <input type="tel" class="form-control" name="number_of_location" placeholder="Telephone Number of Location" required>
+              <input type="tel" class="form-control" name="number_of_location" placeholder="Telephone Number of Location" onkeypress="allow_numbers_only(event)" required>
             </div>
 
             <div class="form-row">
@@ -72,6 +81,9 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <textarea class="form-control" rows="2" placeholder="Comment" name="comment" required></textarea>
+            </div>
 
 
             <button type="submit" class="btn btn-primary block" name="submit_button">Submit Your Request</button>
