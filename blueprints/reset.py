@@ -9,6 +9,10 @@ prereset_page = Blueprint('prereset_page', __name__, template_folder='templates'
 
 @prereset_page.route('/reset',methods=['GET', 'POST'])
 def pre_reset():
+    '''
+        Allows a user to put in the email. An email is sent to that account if the user exists in the database with a
+        link to reset their password.
+    '''
     if request.method == "POST":
         try:
             token = generate_token(32)
@@ -29,6 +33,7 @@ reset_page = Blueprint('reset_page', __name__, template_folder='templates')
 
 @reset_page.route('/reset/<username>/<token>', methods=['GET', 'POST'])
 def reset(username, token):
+    ''' Allows a user to input in a valid password reset token, their username, and their new desired password. '''
     if request.method == "POST":
         if not username_exists(request.form['username']):
             flash('No user with that username exists.', 'danger')

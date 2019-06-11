@@ -7,6 +7,7 @@ submit_page = Blueprint('submit_page', __name__, template_folder='templates')
 
 @submit_page.route('/submit', methods=['GET', 'POST'])
 def submit():
+    ''' Allows users with the 'student' level to submit a request based on various information provided. '''
     if g.user and g.level == "student":
         if request.method == "POST":
             if "submit_button" in request.form:
@@ -20,7 +21,11 @@ def submit():
                                     request.form['comment'], token, request.form['granter_email'])
                 flash('Your submission was successful!', 'success')
 
-        return render_template("submit.html")
+        counselor_list = []
+        for name in return_counselor_names():
+            counselor_list.append("%s %s" % (name[0], name[1]))
+
+        return render_template("submit.html", counselor_list=counselor_list)
     else:
         return redirect(url_for('home_page.home'))
 

@@ -26,7 +26,7 @@
                 [x] approval of requests
 
         * verification process *
-            [ ] setup auto-mailer -> google smtp server
+            [x] setup auto-mailer -> google smtp server
             [x] different user accounts (administrator -> counselor -> student)
 
         * finishing touches *
@@ -51,10 +51,13 @@ from blueprints.reset import prereset_page
 from blueprints.home import home_page
 from blueprints.submit import submit_page
 
+from api.submissions import api_submissions
+
 import os
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 user_levels = {
     'student': 0,
@@ -70,30 +73,27 @@ app.register_blueprint(reset_page)
 app.register_blueprint(prereset_page)
 app.register_blueprint(submit_page)
 
+app.register_blueprint(api_submissions)
 
-# This is called before a request is made to the server.
+
 @app.before_request
 def before_request():
     g.user = None
     if 'user' in session:
         # 'g' is a namespace object that has the same lifetime as an application context.
         g.user = session['user']
-        g.total_hours = return_user_data(session['user'])['total_hours']
         g.level = list(user_levels.keys())[list(user_levels.values()).index(return_user_data(session['user'])['user_level'])]
-
-        g.counselor_list = []  # our list of counselors
-        for name in return_counselor_names():
-            g.counselor_list.append("%s %s" % (name[0], name[1]))
 
 
 @app.route('/')
 def root():
+    ''' When anyone loads the root of the website, it redirects them to the login screen. '''
     return redirect(url_for('login_page.login'))
 
 
-# The logout page of our website.
 @app.route('/logout')
 def logout():
+    ''' Allows a user in a session to logout. '''
     session.pop('user', None)
     return redirect(url_for('login_page.login'))
 

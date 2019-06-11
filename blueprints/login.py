@@ -6,9 +6,9 @@ import hashlib
 login_page = Blueprint('login_page', __name__, template_folder='templates')
 
 
-# The root of our website.
 @login_page.route('/login', methods=['GET', 'POST'])
 def login():
+    ''' Allows anyone to login to the session with valid credentials. '''
     if request.method == 'POST':
         if 'login_button' in request.form:
             hashed_password = hashlib.sha256(request.form['password'].encode()).hexdigest()
