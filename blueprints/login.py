@@ -18,7 +18,7 @@ def login():
                 session['user'] = request.form['username']
                 return redirect(url_for('home_page.home'))
             else:
-                flash('The username or password was incorrect.')
+                flash('The username or password was incorrect.', 'danger')
         elif 'register_button' in request.form:
             return redirect(url_for('register_page.register'))
 

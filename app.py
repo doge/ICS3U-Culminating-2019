@@ -51,13 +51,14 @@ from blueprints.reset import prereset_page
 from blueprints.home import home_page
 from blueprints.submit import submit_page
 
-from api.submissions import api_submissions
+from api.api import api
 
 import os
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+app.url_map.strict_slashes = False
 
 user_levels = {
     'student': 0,
@@ -73,7 +74,7 @@ app.register_blueprint(reset_page)
 app.register_blueprint(prereset_page)
 app.register_blueprint(submit_page)
 
-app.register_blueprint(api_submissions)
+app.register_blueprint(api)
 
 
 @app.before_request

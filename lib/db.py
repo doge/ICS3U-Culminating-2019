@@ -145,7 +145,8 @@ def insert_new_user(username, first_name, last_name, email, password):
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
 
-    c.executemany("INSERT INTO fractal_users ('username', 'first_name', 'last_name', 'email', 'password') VALUES (?, ?, ?, ?, ?)", to_insert)
+    c.executemany("INSERT INTO fractal_users ('username', 'first_name', 'last_name', 'email', 'password') VALUES "
+                  "(?, ?, ?, ?, ?)", to_insert)
     conn.commit()
 
     conn.close()
@@ -154,7 +155,6 @@ def insert_new_user(username, first_name, last_name, email, password):
 def return_counselor_names():
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    #c.row_factory = dict_factory
 
     c.execute("SELECT first_name, last_name from fractal_users WHERE user_level=1")
     conn.commit()
@@ -202,7 +202,8 @@ def set_status_of_activity(activity_id, status):
     conn.close()
 
 
-def insert_new_activity(user_id, full_name, number_of_hours, location, telephone_number, date_completed, counselor, student_comment, token, granter_email):
+def insert_new_activity(user_id, full_name, number_of_hours, location, telephone_number, date_completed, counselor,
+                        student_comment, token, granter_email):
     date_submitted = datetime.datetime.now().strftime("%Y-%m-%d")
 
     to_insert = [(user_id, full_name, number_of_hours, location, date_submitted, date_completed,
@@ -212,7 +213,8 @@ def insert_new_activity(user_id, full_name, number_of_hours, location, telephone
     c = conn.cursor()
 
     c.executemany("INSERT INTO fractal_activities ('user_id', 'name', 'num_of_hours', 'location', 'date_submitted', "
-                  "'date_of_completion', 'phone_number', 'counselor', 'student_comment', 'post_token', 'giver_email') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", to_insert)
+                  "'date_of_completion', 'phone_number', 'counselor', 'student_comment', 'post_token', 'giver_email') "
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", to_insert)
     conn.commit()
 
     conn.close()

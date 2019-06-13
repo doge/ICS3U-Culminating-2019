@@ -26,3 +26,25 @@ def return_all_activities():
     conn.commit()
 
     return c.fetchall()
+
+
+def return_api_tokens():
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.row_factory = dict_factory
+
+    c.execute("SELECT api_token FROM fractal_users")
+    conn.commit()
+
+    return [x['api_token'] for x in c.fetchall()]
+
+
+def update_api_token(token, username):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    c.row_factory = dict_factory
+
+    c.execute("UPDATE fractal_users SET api_token=? WHERE username=?", (token, username))
+    conn.commit()
+
+    conn.close()

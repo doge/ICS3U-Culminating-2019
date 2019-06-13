@@ -14,7 +14,7 @@ ssl_port = 465
 
 def send_mail(to_email, message_to_send):
     '''
-        sends an email to a user with a message to send
+        Sends an email to a user with a message to send.
     '''
 
     server = smtplib.SMTP_SSL('smtp.gmail.com', ssl_port)

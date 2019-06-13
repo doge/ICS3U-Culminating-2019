@@ -5,7 +5,6 @@ import hashlib
 register_page = Blueprint('register_page', __name__, template_folder='templates')
 
 
-# The registration page of our website.
 @register_page.route('/register', methods=['GET', 'POST'])
 def register():
     ''' Allows anyone to register an account on the website. '''
